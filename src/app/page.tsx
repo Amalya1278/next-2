@@ -1,24 +1,24 @@
 
-import { Users } from "./_helpers/orm"
+import { IUser, Users } from "./_helpers/orm"
 
 export default async function Home(){
   
 
   const userModel=new Users()
-  const result = await userModel.findAll()
-  const search = await userModel.find({ name: "Bob Brown" })
+  const [result] = await userModel.findAll() as any[]
+  const [search] = await userModel.find({ name: 'John Do' }) as any[]
   console.log(search)
 
-  await userModel.insert({name:'sona',age:23})
+  await userModel.insert({name:'sona',age:24})
 
-  await userModel.delete({age:22})
+  await userModel.delete({age:24})
 
   return (
     <>
       <h1 className="text-3xl font-semibold mb-8 text-gray-900 dark:text-white">Users</h1>
       <div className="flex flex-wrap gap-8 justify-center">
         {
-          result.map(user => (
+          result.map((user:any) => (
             <div key={user.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 p-4 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all dark:bg-gray-800 dark:text-white">
               <p className="text-xl font-medium text-gray-800 dark:text-gray-100">{user.name}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{user.age} years old</p>

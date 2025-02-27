@@ -20,45 +20,29 @@ export class Model{
             
         })
     }
-   async findAll():Promise <IUser[]>{
-    const [rows]=await this.pool.query(`SELECT * FROM ${this.table}`)
-    return rows as IUser[]
+   async findAll(){
+    return await this.pool.query(`SELECT * FROM ${this.table}`)
+    
     }
 
-    async find(options:Partial<IUser>):Promise<IUser[]>{
-        if(Object.keys(options).length==0){
-            return await this.findAll()
-        }
-        let query=`SELECT * FROM ${this.table} WHERE `
-        let values: any[] = [];
+    async find(options:Partial<IUser>){
+        let query=`SELECT * FROM ${this.table} WHERE name=? AND age=? `
 
-    for (let key in options) {
-        query += `${key} = ? AND `;
-        values.push(options[key as keyof IUser]);
-    }
+   
 
-    query = query.slice(0, -5); 
-try{
-    const [rows] = await this.pool.query(query, values);
-    return rows as IUser[];
-} catch(err){
-    console.log(err)
-    return []
-}
+   query = query.slice(0, -3); 
+
+  return await this.pool.query(query,[options.name,options.age])
 
 
     }
    async delete(options:Partial<IUser>){
-    let query=`DELETE FROM ${this.table} WHERE `
-    let values:any[]=[]
-    if(options.age){
-        query+='age=?'
-       values.push(options.age)
-    }
-    return this.pool.query(query,values)
+    let query=`DELETE FROM ${this.table} WHERE age=?`
+    
+    return this.pool.query(query,[options.age])
 
     }
-     async insert(user:{name:string;age:number}){
+  async insert(user:{name:string;age:number}){
         return await this.pool.query(`INSERT INTO users(name,age)
             VALUES(?,?)`,[user.name,user.age])
 
